@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  novozh_flask:
+    container_name: novozh_flask_cjm
+    build: .
+    volumes: 
+      - .:/app
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_RUN_HOST=0.0.0.0
+      - FLASK_RUN_PORT=5000
+    restart: unless-stopped
+volumes:
+  flaskdb:
+    driver: local

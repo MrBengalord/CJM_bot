@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CJM-bot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .website-field {
+            display: flex;
+            align-items: center;
+        }
+
+        .website-field label {
+            margin-right: 5px;
+        }
+
+        .website-field button {
+            margin-left: 5px;
+        }
+
+        .date-group {
+            display: flex;
+            margin-top: 10px;
+            gap: 10px; /* Уменьшено расстояние между полями */
+        }
+
+        .additional-checkboxes {
+            display: none;
+            flex-wrap: wrap;
+            margin-top: 0px;
+            margin-left: 20px;
+            margin-bottom: 0px;
+        }
+
+        .additional-checkboxes.show {
+            display: flex;
+            margin-top: 5px;
+            animation: fadeIn 0.5s;
+        }
+
+        .additional-checkboxes div {
+            flex: 1 1 30%; /* 3 столбца */
+            margin-bottom: 5px;
+            margin-top: 0px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .alert {
+            padding: 10px;
+            background-color: #f44336;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .closebtn {
+            margin-left: 15px;
+            color: white;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .closebtn:hover {
+            color: black;
+        }
+
+        label.custom-checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        label.custom-checkbox-label input {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class="transparent-container-new_background">
+        <h2>Введите данные для анализа</h2> <!-- Новый заголовок -->
+        <div class="transparent-container-new">
+
+        <!-- Сообщения об ошибках -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Контейнер формы с отступом сверху -->
+        <form id="mainForm" action="/result" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+            <!-- Поля ввода с отступами -->
+            <div class="form-group">
+                <label for="input1">Категория</label>
+                <input type="text" class = "input2" id="input1" name="input1">
+                <br>
+                <label for="input2">Клиент</label>
+                <input type="text" id="input2" name="input2">
+            </div>
+            <p>Выберите этапы жизненного цикла:</p>
+            
+            <!-- Чекбоксы с названиями -->
+            <div class="form-group">
+                <label for="stage1" class="custom-checkbox-label">
+                    <input type="checkbox" id="stage1" name="stages" value="Возникновение потребности в товаре">
+                    Возникновение потребности в товаре
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="stage2" class="custom-checkbox-label">
+                    <input type="checkbox" id="stage2" name="stages" value="Принятие решения о покупке">
+                    Принятие решения о покупке
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="stage3" class="custom-checkbox-label">
+                    <input type="checkbox" id="stage3" name="stages" value="Совершение покупки">
+                    Совершение покупки
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="stage4" class="custom-checkbox-label">
+                    <input type="checkbox" id="stage4" name="stages" value="Возникновения лояльности к бренду или совершения повторной покупки">
+                    Возникновения лояльности к бренду или совершения повторной покупки
+                </label>
+            </div>
+
+            <p>Выберите опции для анализа:</p>
+
+            <!-- Дополнительные пять чекбоксов с названиями -->
+            <div class="form-group">
+                <label for="option1" class="custom-checkbox-label">
+                    <input type="checkbox" id="option1" name="options" value="Шаги в рамках этапов">
+                    Шаги в рамках этапов
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="option2" class="custom-checkbox-label">
+                    <input type="checkbox" id="option2" name="options" value="Точки контакта">
+                    Точки контакта
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="option3" class="custom-checkbox-label">
+                    <input type="checkbox" id="option3" name="options" value="Драйверы">
+                    Драйверы
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="option4" class="custom-checkbox-label">
+                    <input type="checkbox" id="option4" name="options" value="Барьеры">
+                    Барьеры
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="option5" class="custom-checkbox-label">
+                    <input type="checkbox" id="option5" name="options" value="Бренды">
+                    Бренды
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="option6" class="custom-checkbox-label">
+                    <input type="checkbox" id="option5" name="options" value="Цитаты">
+                    Цитаты
+                </label>
+            </div>
+            
+            <!-- Кнопка для выбора файла -->
+            <br>
+            <p>Выберите файл для анализа:</p>
+            <input type="file" class="custom-file-button" id="file-input" name="file">
+        
+        <br>
+        <!-- Отступ для кнопки -->
+        <div class="form-group">
+            <button type="submit">Запустить анализ</button>
+        </div>
+    </form>
+    </div>
+</div>
+<div class="loading-overlay" id="loadingOverlay">
+    Подождите, идет анализ...
+</div>
+
+    <script>
+        // Новая функция для отображения и скрытия загрузочного экрана
+        function showLoadingScreen() {
+            document.getElementById('loadingOverlay').style.display = 'block';
+        }
+
+        function hideLoadingScreen() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        function validateForm() {
+            const input1 = document.getElementById('input1').value.trim();
+            const input2 = document.getElementById('input2').value.trim();
+            const stages = document.querySelectorAll('input[name="stages"]:checked');
+            const options = document.querySelectorAll('input[name="options"]:checked');
+
+            if (input1 === '' || input2 === '') {
+                alert('Пожалуйста, заполните все обязательные поля: Категория и Клиент.');
+                return false; // предотвращает отправку формы
+            }
+
+            if (stages.length === 0) {
+                alert('Пожалуйста, выберите хотя бы один этап.');
+                return false; // предотвращает отправку формы
+            }
+
+            if (options.length === 0) {
+                alert('Пожалуйста, выберите хотя бы одну опцию.');
+                return false; // предотвращает отправку формы
+            }
+            showLoadingScreen();  // Отображаем загрузочный экран
+            return true; // позволяет отправку формы
+        }
+    </script>
+</body>
+</html>

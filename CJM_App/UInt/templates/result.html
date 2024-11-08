@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Результат анализа</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Добавление стиля для элементов <h3> */
+        h3 {
+            color: rgb(138, 95, 3);
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    {% include 'header.html' %}
+    <div class="transparent-container-new_background">
+        <h1>Результаты анализа:</h1>
+
+        <div class="transparent-container-new">
+            <h3>Категория:</h3>
+            <p>{{ results.input1 }}</p>
+
+            <h3>Клиент:</h3>
+            <p>{{ results.input2 }}</p>
+
+            <h3>Этапы жизненного цикла:</h3>
+            <ul>
+                {% for stage in results.stages %}
+                    <li>{{ stage }}</li>
+                {% endfor %}
+            </ul>
+
+            <h3>Опции для анализа:</h3>
+            <ul>
+                {% for option in results.options %}
+                    <li>{{ option }}</li>
+                {% endfor %}
+            </ul>
+
+            <h3>Загруженный файл:</h3>
+            <p>{{ results.file_filename }}</p>
+        
+            {% if results.generated_file_path %}
+            <h3>Сгенерированный файл:</h3>
+            <form action="{{ url_for('download_file') }}" method="post">
+                <input type="hidden" id="file-url" name ='filename' value="{{ results.generated_file_path }}">
+                <button type="submit">Скачать CJM</button>
+            </form>
+            {% else %}
+            <p>Ошибка при генерации файла.</p>
+            {% endif %}
+        </div> <!-- Закрытие правильного контейнера -->
+    </div>
+</body>
+</html>
