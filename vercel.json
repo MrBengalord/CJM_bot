@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "CJM_App/UInt/app.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "functions": {
+    "CJM_App/UInt/app.py": {
+      "includeFiles": [
+        "CJM_App/UInt/templates/**",
+        "CJM_App/UInt/static/**"
+      ]
+    }
+  },
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "CJM_App/UInt/app.py"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "builds": [{ "src": "app.py", "use": "@vercel/python" }],
+  "functions": {
+    "app.py": {
+      "includeFiles": ["templates/**", "static/**"]
+    }
+  },
+  "routes": [{ "src": "/(.*)", "dest": "app.py" }]
+}
